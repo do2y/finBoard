@@ -2,7 +2,7 @@
 
 자산 데이터를 기반으로 목표 달성 시점을 계산하고 공유하는 데이터 중심 커뮤니티 서비스
 
-### ■ 1. 프로젝트 개요
+### 1. 프로젝트 개요
 
 FinBoard는 사용자가 자신의 자산 정보를 입력하면
 목표까지의 진행률과 예상 기간을 자동으로 계산하고
@@ -11,31 +11,41 @@ FinBoard는 사용자가 자신의 자산 정보를 입력하면
 기존 텍스트 중심 게시판과 달리,
 데이터를 기반으로 한 인사이트 공유에 초점을 맞추었습니다.
 
-### ■ 2. 사용 기술
+<br>
 
-Frontend
+---
 
-HTML / CSS / Tailwind CSS
-Vanilla JavaScript
+<br>
 
-Backend
+### 2. 사용 기술
 
-Node.js (Express)
+### Frontend
 
-Database
+- HTML / CSS / Tailwind CSS
+- Vanilla JavaScript
 
-MariaDB
+### Backend
 
-Infra
+- Node.js (Express)
+- Database
+- MariaDB
 
-GCP VM
-Cloudflare (HTTPS, SSL)
+### Infra
 
-Auth
+- GCP VM
+- Cloudflare (HTTPS, SSL)
 
-JWT (JSON Web Token)
+### Auth
 
-### ■ 3. 주요 기능
+- JWT (JSON Web Token)
+
+<br>
+
+---
+
+<br>
+
+### 3. 주요 기능
 
 사용자 인증
 로그인 시 JWT 발급
@@ -58,7 +68,13 @@ JWT (JSON Web Token)
 조회수 기준 인기 게시글
 댓글 기준 활성 게시글
 
-### ■ 4. 시스템 구조
+<br>
+
+---
+
+<br>
+
+### 4. 시스템 구조
 
 Client (HTML, JS)
 → Express Server (API)
