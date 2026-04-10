@@ -61,9 +61,7 @@
             localStorage.setItem("token", result.token);
             localStorage.setItem("userName", result.name);
             alert(result.message);
-            location.href = "dashboard.html";
-          } else {
-            alert(result.message);
+            location.href = "posts.html";
           }
         } catch (error) {
           alert("서버 연결 실패");
