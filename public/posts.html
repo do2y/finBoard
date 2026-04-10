@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finBoard - Premium Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #1f6fff;
+        --dark: #0f172a;
+        --bg: #f8fafc;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", "Noto Sans KR", sans-serif;
+        background-color: var(--bg);
+        color: var(--dark);
+      }
+
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      }
+
+      .bento-card {
+        background: white;
+        border: 1px solid #f1f5f9;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .bento-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn-gradient {
+        background: linear-gradient(135deg, #1f6fff 0%, #3b82f6 100%);
+        transition: all 0.3s ease;
+      }
+
+      .btn-gradient:hover {
+        box-shadow: 0 10px 20px -5px rgba(31, 111, 255, 0.4);
+        opacity: 0.9;
+      }
+
+      .progress-fill {
+        background: linear-gradient(90deg, #1f6fff, #60a5fa);
+        transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      /* 깔끔한 스크롤바 */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen pb-20">
+    <nav class="glass-nav sticky top-0 z-50 px-6 py-4">
+      <div class="mx-auto flex max-w-7xl items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200"
+          >
+            <i class="fas fa-vault text-lg"></i>
+          </div>
+          <span class="text-2xl font-extrabold tracking-tight text-slate-900"
+            >finBoard</span
+          >
+        </div>
+
+        <div class="hidden items-center gap-8 md:flex">
+          <a
+            href="home-finder"
+            class="text-sm font-semibold text-slate-500 hover:text-blue-600"
+            >집 탐색기</a
+          >
+          <a
+            href="dashboard.html"
+            class="text-sm font-semibold text-slate-500 hover:text-blue-600"
+            >대시보드</a
+          >
+          <div class="h-4 w-px bg-slate-200"></div>
+          <div class="flex items-center gap-3">
+            <span id="userWelcome" class="text-sm font-bold text-slate-700"
+              >사용자님</span
+            >
+            <button
+              onclick="logout()"
+              class="text-xs font-bold text-red-400 hover:text-red-600 uppercase tracking-tighter"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <button
+          onclick="openModal()"
+          class="btn-gradient rounded-full px-6 py-2.5 text-sm font-bold text-white shadow-md"
+        >
+          <i class="fas fa-plus mr-2"></i>새 목표 작성
+        </button>
+      </div>
+    </nav>
+
+    <main class="mx-auto max-w-7xl px-6 pt-12">
+      <header class="mb-12">
+        <h2 class="text-4xl font-extrabold tracking-tight text-slate-900">
+          Community Feed
+        </h2>
+        <p class="mt-3 text-lg text-slate-500">
+          다른 사람들의 자산 관리 전략을 탐색하고 영감을 얻으세요.
+        </p>
+      </header>
+
+      <section class="mb-16 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div
+          class="bento-card relative overflow-hidden rounded-[2.5rem] p-8 md:col-span-2"
+        >
+          <div class="relative z-10">
+            <p
+              class="text-xs font-bold uppercase tracking-[0.2em] text-blue-500"
+            >
+              Total Insights
+            </p>
+            <h3
+              class="mt-2 text-5xl font-extrabold text-slate-900"
+              id="feedCount"
+            >
+              0
+            </h3>
+            <p class="mt-2 text-slate-400 font-medium">
+              실시간으로 공유되는 자산 목표
+            </p>
+          </div>
+          <i
+            class="fas fa-globe absolute -right-6 -bottom-6 text-9xl text-slate-50 opacity-[0.05]"
+          ></i>
+        </div>
+
+        <div
+          class="bento-card rounded-[2.5rem] bg-orange-50/50 p-7 border-orange-100"
+        >
+          <div
+            class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-600"
+          >
+            <i class="fas fa-fire"></i>
+          </div>
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-orange-400"
+          >
+            Most Trending
+          </p>
+          <p
+            id="mostViewed"
+            class="mt-3 font-bold leading-snug text-slate-800 line-clamp-2 italic"
+          >
+            데이터를 불러오는 중...
+          </p>
+        </div>
+
+        <div
+          class="bento-card rounded-[2.5rem] bg-emerald-50/50 p-7 border-emerald-100"
+        >
+          <div
+            class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
+          >
+            <i class="fas fa-comments"></i>
+          </div>
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-emerald-400"
+          >
+            Active Debate
+          </p>
+          <p
+            id="mostDiscussed"
+            class="mt-3 font-bold leading-snug text-slate-800 line-clamp-2 italic"
+          >
+            데이터를 불러오는 중...
+          </p>
+        </div>
+      </section>
+
+      <section
+        id="postsContainer"
+        class="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+      ></section>
+    </main>
+
+    <div
+      id="recordModal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md"
+    >
+      <div
+        class="w-full max-w-xl overflow-hidden rounded-[3rem] bg-white p-10 shadow-2xl"
+      >
+        <div class="mb-8 flex items-center justify-between">
+          <h2 class="text-3xl font-extrabold text-slate-900">New Goal</h2>
+          <button
+            onclick="closeModal()"
+            class="text-slate-400 hover:text-slate-600"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="space-y-5">
+          <div>
+            <label
+              class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400"
+              >목표 제목</label
+            >
+            <input
+              id="modalTitle"
+              type="text"
+              class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-medium outline-none focus:border-blue-500 focus:bg-white transition-all"
+              placeholder="예: 3년 안에 내 집 마련"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400"
+                >현재 자산</label
+              >
+              <input
+                id="modalCurrent"
+                type="number"
+                class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-medium outline-none focus:border-blue-500 focus:bg-white"
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label
+                class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400"
+                >월 저축액</label
+              >
+              <input
+                id="modalMonthly"
+                type="number"
+                class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-medium outline-none focus:border-blue-500 focus:bg-white"
+                placeholder="0"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400"
+              >목표 금액</label
+            >
+            <input
+              id="modalGoal"
+              type="number"
+              class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-medium outline-none focus:border-blue-500 focus:bg-white"
+              placeholder="0"
+            />
+          </div>
+        </div>
+        <div class="mt-10 flex gap-4">
+          <button
+            onclick="closeModal()"
+            class="flex-1 rounded-2xl py-4 font-bold text-slate-400 hover:bg-slate-50"
+          >
+            취소
+          </button>
+          <button
+            onclick="addPost()"
+            class="btn-gradient flex-[2] rounded-2xl py-4 font-bold text-white shadow-lg"
+          >
+            목표 등록하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md"
+    >
+      <div
+        class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[3rem] bg-white p-10 shadow-2xl"
+      >
+        <div class="mb-8 flex items-start justify-between">
+          <div>
+            <p
+              id="detailAuthor"
+              class="text-sm font-bold text-blue-600 uppercase tracking-widest"
+            >
+              WRITER NAME
+            </p>
+            <h2
+              id="detailTitle"
+              class="mt-2 text-4xl font-extrabold text-slate-900 leading-tight"
+            >
+              상세 목표 제목
+            </h2>
+          </div>
+          <button
+            onclick="closeDetailModal()"
+            class="text-slate-400 hover:text-slate-600"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4 mb-8 text-center">
+          <div class="rounded-3xl bg-slate-50 p-5">
+            <p
+              class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+            >
+              Views
+            </p>
+            <p id="detailViews" class="text-xl font-extrabold mt-1">0</p>
+          </div>
+          <div class="rounded-3xl bg-slate-50 p-5">
+            <p
+              class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+            >
+              Comments
+            </p>
+            <p id="detailCommentsCount" class="text-xl font-extrabold mt-1">
+              0
+            </p>
+          </div>
+          <div class="rounded-3xl bg-slate-900 p-5 text-white col-span-2">
+            <p
+              class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+            >
+              Time to Goal
+            </p>
+            <p
+              id="detailDuration"
+              class="text-xl font-extrabold mt-1 text-blue-400"
+            >
+              -
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="p-6 border border-slate-100 rounded-3xl">
+              <p class="text-xs font-bold text-slate-400 uppercase mb-2">
+                Current
+              </p>
+              <p id="detailCurrent" class="text-2xl font-black text-slate-900">
+                0원
+              </p>
+            </div>
+            <div class="p-6 border border-slate-100 rounded-3xl">
+              <p class="text-xs font-bold text-slate-400 uppercase mb-2">
+                Monthly
+              </p>
+              <p id="detailMonthly" class="text-2xl font-black text-slate-900">
+                0원
+              </p>
+            </div>
+            <div class="p-6 border border-slate-100 rounded-3xl">
+              <p class="text-xs font-bold text-slate-400 uppercase mb-2">
+                Target
+              </p>
+              <p id="detailGoal" class="text-2xl font-black text-blue-600">
+                0원
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-3xl bg-blue-50 p-8">
+            <div class="flex justify-between items-end mb-4">
+              <span
+                class="text-sm font-bold text-blue-900 uppercase tracking-tighter"
+                >Achievement Progress</span
+              >
+              <span
+                id="detailProgressLabel"
+                class="text-3xl font-black text-blue-600"
+                >0%</span
+              >
+            </div>
+            <div
+              class="h-4 w-full bg-white rounded-full overflow-hidden shadow-inner"
+            >
+              <div
+                id="detailProgressBar"
+                class="progress-fill h-full rounded-full"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <section>
+            <h3 class="text-2xl font-extrabold mb-6">Discussion</h3>
+            <div class="flex gap-3 mb-8">
+              <input
+                id="commentInput"
+                type="text"
+                class="flex-1 rounded-2xl bg-slate-50 px-6 py-4 outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder="의견이나 응원을 남겨주세요."
+              />
+              <button
+                onclick="submitComment()"
+                class="btn-gradient rounded-2xl px-8 font-bold text-white"
+              >
+                전송
+              </button>
+            </div>
+            <div id="commentsList" class="space-y-4"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const userName = localStorage.getItem("userName") || "사용자";
+      let selectedRecordId = null;
+
+      window.onload = function () {
+        if (!token) {
+          alert("로그인이 필요합니다.");
+          location.href = "index.html";
+          return;
+        }
+        document.getElementById("userWelcome").innerText = `${userName}님`;
+        loadPosts();
+      };
+
+      function logout() {
+        localStorage.clear();
+        location.href = "index.html";
+      }
+
+      function openModal() {
+        document
+          .getElementById("recordModal")
+          .classList.replace("hidden", "flex");
+      }
+
+      function closeModal() {
+        document
+          .getElementById("recordModal")
+          .classList.replace("flex", "hidden");
+      }
+
+      function closeDetailModal() {
+        document
+          .getElementById("detailModal")
+          .classList.replace("flex", "hidden");
+        document.getElementById("commentInput").value = "";
+        selectedRecordId = null;
+      }
+
+      function formatCurrency(value) {
+        return `${Number(value || 0).toLocaleString()}원`;
+      }
+
+      function formatDate(value) {
+        if (!value) return "방금 전";
+        return new Date(value).toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+
+      function formatDateTime(value) {
+        if (!value) return "방금 전";
+        return new Date(value).toLocaleString("ko-KR", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+
+      async function parseApiResponse(response) {
+        const raw = await response.text();
+        try {
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          throw new Error(raw || "서버 응답 오류");
+        }
+      }
+
+      function calculateDuration(current, goal, monthly) {
+        const c = Number(current || 0),
+          g = Number(goal || 0),
+          m = Number(monthly || 0);
+        if (g <= c) return "목표 달성 완료! 🎉";
+        if (m <= 0) return "저축 계획 필요";
+        const totalMonths = Math.ceil((g - c) / m);
+        const y = Math.floor(totalMonths / 12),
+          rm = totalMonths % 12;
+        return y > 0
+          ? `${y}년 ${rm > 0 ? rm + "개월" : ""}`
+          : `${totalMonths}개월`;
+      }
+
+      function progressPercent(current, goal) {
+        const g = Number(goal || 0);
+        return g <= 0
+          ? 0
+          : Math.min(100, Math.round((Number(current || 0) / g) * 100));
+      }
+
+      function renderFeedSummary(posts) {
+        document.getElementById("feedCount").innerText = posts.length;
+        const mostViewed = [...posts].sort(
+          (a, b) => (b.view_count || 0) - (a.view_count || 0),
+        )[0];
+        const mostDiscussed = [...posts].sort(
+          (a, b) => (b.comment_count || 0) - (a.comment_count || 0),
+        )[0];
+        document.getElementById("mostViewed").innerText = mostViewed
+          ? `${mostViewed.title} (${mostViewed.view_count}회)`
+          : "아직 없음";
+        document.getElementById("mostDiscussed").innerText = mostDiscussed
+          ? `${mostDiscussed.title} (${mostDiscussed.comment_count}개)`
+          : "아직 없음";
+      }
+
+      function renderPosts(posts) {
+        const container = document.getElementById("postsContainer");
+        if (!posts.length) {
+          container.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400 font-bold">첫 번째 목표를 공유해보세요!</div>`;
+          return;
+        }
+
+        container.innerHTML = posts
+          .map((post) => {
+            const progress = progressPercent(
+              post.current_asset,
+              post.goal_amount,
+            );
+            const isOwner =
+              Number(post.user_id) === Number(parseJwt(token)?.id);
+            const title = escapeHtml(post.title);
+            const author = escapeHtml(post.author_name || "익명");
+
+            return `
+            <article class="bento-card group rounded-[3rem] p-8">
+              <div class="mb-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <i class="fas fa-user-ninja"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-slate-900">${author}</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${formatDate(post.created_at)}</p>
+                  </div>
+                </div>
+                ${isOwner ? `<button onclick="deletePost(${post.id})" class="text-slate-200 hover:text-red-500 transition-colors"><i class="fas fa-trash-can"></i></button>` : ""}
+              </div>
+
+              <h3 class="mb-6 cursor-pointer text-2xl font-extrabold leading-tight tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors" onclick="openDetail(${post.id})">
+                ${title}
+              </h3>
+
+              <div class="mb-8 space-y-4">
+                <div class="flex items-end justify-between">
+                  <span class="text-[11px] font-black uppercase tracking-widest text-slate-300">Targeting</span>
+                  <span class="text-lg font-black text-blue-600">${progress}%</span>
+                </div>
+                <div class="h-2.5 w-full rounded-full bg-slate-50 overflow-hidden shadow-inner">
+                  <div class="progress-fill h-full rounded-full" style="width: ${progress}%"></div>
+                </div>
+              </div>
+
+              <div class="mb-8 grid grid-cols-2 gap-3">
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Current</p>
+                  <p class="font-extrabold text-slate-700">${formatCurrency(post.current_asset)}</p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Goal</p>
+                  <p class="font-extrabold text-slate-700">${formatCurrency(post.goal_amount)}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex gap-4">
+                  <span class="text-xs font-bold text-slate-400"><i class="far fa-eye mr-1.5"></i>${post.view_count}</span>
+                  <span class="text-xs font-bold text-slate-400"><i class="far fa-comment mr-1.5"></i>${post.comment_count}</span>
+                </div>
+                <button onclick="openDetail(${post.id})" class="text-sm font-black text-blue-600 hover:underline">View Detail <i class="fas fa-arrow-right ml-1"></i></button>
+              </div>
+            </article>
+          `;
+          })
+          .join("");
+      }
+
+      function renderComments(comments) {
+        const list = document.getElementById("commentsList");
+        document.getElementById("detailCommentsCount").innerText =
+          comments.length;
+        if (!comments.length) {
+          list.innerHTML = `<p class="py-10 text-center text-slate-400 font-medium bg-slate-50 rounded-3xl">아직 대화가 없습니다. 첫 댓글을 남겨보세요!</p>`;
+          return;
+        }
+        list.innerHTML = comments
+          .map(
+            (c) => `
+          <div class="rounded-3xl bg-slate-50 p-6">
+            <div class="flex justify-between mb-2">
+              <p class="text-sm font-extrabold text-slate-800">${escapeHtml(c.author_name || "익명")}</p>
+              <span class="text-[11px] font-bold text-slate-400">${formatDateTime(c.created_at)}</span>
+            </div>
+            <p class="text-sm leading-relaxed text-slate-600 font-medium">${escapeHtml(c.content)}</p>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      async function loadPosts() {
+        try {
+          const res = await fetch("/api/feed", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const posts = await parseApiResponse(res);
+          if (!res.ok) throw new Error(posts.message);
+          renderFeedSummary(posts);
+          renderPosts(posts);
+        } catch (e) {
+          console.error(e);
+          document.getElementById("postsContainer").innerHTML =
+            `<div class="col-span-full py-20 text-center text-red-500 font-bold">데이터를 불러오지 못했습니다.</div>`;
+        }
+      }
+
+      async function addPost() {
+        try {
+          const payload = {
+            title: document.getElementById("modalTitle").value.trim(),
+            current_asset: document.getElementById("modalCurrent").value,
+            monthly_saving: document.getElementById("modalMonthly").value,
+            goal_amount: document.getElementById("modalGoal").value,
+          };
+          if (!payload.title || !payload.goal_amount)
+            return alert("필수 항목을 입력하세요.");
+          const res = await fetch("/api/records", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error("등록 실패");
+          closeModal();
+          ["modalTitle", "modalCurrent", "modalMonthly", "modalGoal"].forEach(
+            (id) => (document.getElementById(id).value = ""),
+          );
+          loadPosts();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      async function openDetail(id) {
+        selectedRecordId = id;
+        try {
+          const res = await fetch(`/api/records/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const record = await parseApiResponse(res);
+          if (!res.ok) throw new Error(record.message);
+
+          document.getElementById("detailTitle").innerText = record.title;
+          document.getElementById("detailAuthor").innerText =
+            record.author_name || "익명";
+          document.getElementById("detailViews").innerText = record.view_count;
+          document.getElementById("detailCurrent").innerText = formatCurrency(
+            record.current_asset,
+          );
+          document.getElementById("detailMonthly").innerText = formatCurrency(
+            record.monthly_saving,
+          );
+          document.getElementById("detailGoal").innerText = formatCurrency(
+            record.goal_amount,
+          );
+          document.getElementById("detailDuration").innerText =
+            calculateDuration(
+              record.current_asset,
+              record.goal_amount,
+              record.monthly_saving,
+            );
+
+          const progress = progressPercent(
+            record.current_asset,
+            record.goal_amount,
+          );
+          document.getElementById("detailProgressLabel").innerText =
+            `${progress}%`;
+          document.getElementById("detailProgressBar").style.width =
+            `${progress}%`;
+
+          renderComments(record.comments || []);
+          document
+            .getElementById("detailModal")
+            .classList.replace("hidden", "flex");
+          loadPosts();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      async function submitComment() {
+        const content = document.getElementById("commentInput").value.trim();
+        if (!selectedRecordId || !content) return;
+        try {
+          const res = await fetch(`/api/records/${selectedRecordId}/comments`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ content }),
+          });
+          const result = await parseApiResponse(res);
+          document.getElementById("commentInput").value = "";
+          renderComments(result.comments || []);
+          loadPosts();
+        } catch (e) {
+          alert("댓글 전송 오류");
+        }
+      }
+
+      async function deletePost(id) {
+        if (!confirm("정말 이 목표를 삭제하시겠습니까?")) return;
+        try {
+          const res = await fetch(`/api/records/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (selectedRecordId === id) closeDetailModal();
+          loadPosts();
+        } catch (e) {
+          alert("삭제 오류");
+        }
+      }
+
+      function parseJwt(value) {
+        try {
+          return JSON.parse(atob(value.split(".")[1]));
+        } catch (e) {
+          return null;
+        }
+      }
+    </script>
+  </body>
+</html>
