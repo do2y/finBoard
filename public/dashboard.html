@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finBoard - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #1f6fff;
+        --dark: #0f172a;
+        --bg: #f8fafc;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", "Noto Sans KR", sans-serif;
+        background-color: var(--bg);
+        color: var(--dark);
+      }
+
+      /* 네비게이션: 커뮤니티와 동일하게 겹쳐짐 */
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      }
+
+      .bento-card {
+        background: white;
+        border: 1px solid #f1f5f9;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 2.5rem;
+      }
+
+      .bento-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn-gradient {
+        background: linear-gradient(135deg, #1f6fff 0%, #3b82f6 100%);
+      }
+
+      .progress-fill {
+        background: linear-gradient(90deg, #1f6fff, #60a5fa);
+        transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen pb-20">
+    <nav class="glass-nav sticky top-0 z-50 px-6 py-4">
+      <div class="mx-auto flex max-w-7xl items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200"
+          >
+            <i class="fas fa-vault text-lg"></i>
+          </div>
+          <span class="text-2xl font-extrabold tracking-tight text-slate-900"
+            >finBoard</span
+          >
+        </div>
+
+        <div class="hidden items-center gap-8 md:flex">
+          <a
+            href="/home-finder"
+            class="text-sm font-semibold text-slate-500 hover:text-blue-600"
+            >집 탐색기</a
+          >
+          <a
+            href="posts.html"
+            class="text-sm font-semibold text-slate-500 hover:text-blue-600"
+            >포스트</a
+          >
+          <div class="h-4 w-px bg-slate-200"></div>
+          <div class="flex items-center gap-3">
+            <span id="userWelcome" class="text-sm font-bold text-slate-700"
+              >사용자님</span
+            >
+            <a
+              href="mypage.html"
+              class="text-sm font-semibold text-slate-500 hover:text-blue-600"
+              >마이페이지</a
+            >
+
+            <button
+              onclick="logout()"
+              class="text-xs font-bold text-red-400 hover:text-red-600 uppercase"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <button
+          onclick="openModal()"
+          class="btn-gradient rounded-full px-6 py-2.5 text-sm font-bold text-white shadow-md"
+        >
+          <i class="fas fa-plus mr-2"></i>목표 추가
+        </button>
+      </div>
+    </nav>
+
+    <main class="mx-auto max-w-7xl px-6 pt-12">
+      <header class="mb-12">
+        <h2
+          id="heroTitle"
+          class="text-4xl font-extrabold tracking-tight text-slate-900"
+        >
+          Personal Dashboard
+        </h2>
+        <p class="mt-3 text-lg text-slate-500">
+          현재 나의 자산 목표와 저축 현황을 관리합니다.
+        </p>
+      </header>
+
+      <section class="mb-16 grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div class="bento-card relative overflow-hidden p-8 md:col-span-2">
+          <p class="text-xs font-bold uppercase tracking-widest text-blue-500">
+            Overall Progress
+          </p>
+          <div class="mt-4 flex items-end justify-between">
+            <h3
+              id="averageProgressLabel"
+              class="text-5xl font-black text-slate-900"
+            >
+              0%
+            </h3>
+            <span class="text-sm font-bold text-slate-400 mb-2"
+              >총 목표 평균</span
+            >
+          </div>
+          <div
+            class="mt-6 h-3 w-full bg-slate-100 rounded-full overflow-hidden"
+          >
+            <div
+              id="averageProgressBar"
+              class="progress-fill h-full"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+
+        <div class="bento-card p-7 bg-emerald-50/30 border-emerald-100">
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-emerald-500"
+          >
+            Monthly Saving
+          </p>
+          <p id="monthlyTotal" class="mt-4 text-2xl font-black text-slate-800">
+            0원
+          </p>
+          <p class="mt-1 text-sm text-emerald-600">월간 총 저축액</p>
+        </div>
+
+        <div class="bento-card p-7 bg-amber-50/30 border-amber-100">
+          <p class="text-xs font-bold uppercase tracking-widest text-amber-500">
+            Target ETA
+          </p>
+          <p id="totalCount" class="mt-4 text-3xl font-black text-slate-800">
+            0
+          </p>
+          <p class="mt-1 text-sm text-amber-600">진행 중인 목표</p>
+        </div>
+      </section>
+
+      <section
+        id="recordList"
+        class="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+      ></section>
+    </main>
+
+    <div
+      id="recordModal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md"
+    >
+      <div
+        class="w-full max-w-xl overflow-hidden rounded-[3rem] bg-white p-10 shadow-2xl"
+      >
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-8">New Mission</h2>
+        <div class="space-y-5">
+          <input
+            id="modalTitle"
+            type="text"
+            class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100"
+            placeholder="목표 제목"
+          />
+          <div class="grid grid-cols-2 gap-4">
+            <input
+              id="modalCurrent"
+              type="number"
+              class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100"
+              placeholder="현재 자산"
+            />
+            <input
+              id="modalMonthly"
+              type="number"
+              class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100"
+              placeholder="월 저축액"
+            />
+          </div>
+          <input
+            id="modalGoal"
+            type="number"
+            class="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 outline-none focus:bg-white focus:ring-2 focus:ring-blue-100"
+            placeholder="목표 금액"
+          />
+        </div>
+        <div class="mt-10 flex gap-4">
+          <button
+            onclick="closeModal()"
+            class="flex-1 font-bold text-slate-400"
+          >
+            취소
+          </button>
+          <button
+            onclick="addRecord()"
+            class="btn-gradient flex-[2] rounded-2xl py-4 font-bold text-white shadow-lg"
+          >
+            목표 저장
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const userName = localStorage.getItem("userName") || "사용자";
+
+      window.onload = () => {
+        if (!token) {
+          location.href = "index.html";
+          return;
+        }
+        document.getElementById("userWelcome").innerText = `${userName}님`;
+        document.getElementById("heroTitle").innerHTML =
+          `${userName}님의 <span class="text-blue-600">대시보드</span>`;
+        loadRecords();
+      };
+
+      function logout() {
+        localStorage.clear();
+        location.href = "index.html";
+      }
+      function openModal() {
+        document
+          .getElementById("recordModal")
+          .classList.replace("hidden", "flex");
+      }
+      function closeModal() {
+        document
+          .getElementById("recordModal")
+          .classList.replace("flex", "hidden");
+      }
+
+      // 금액 단위 변환 (억, 만원)
+      function formatCompact(v) {
+        const a = Number(v || 0);
+        if (a >= 100000000) return `${(a / 100000000).toFixed(1)}억원`;
+        if (a >= 10000) return `${Math.round(a / 10000).toLocaleString()}만원`;
+        return `${a.toLocaleString()}원`;
+      }
+
+      // 내 자산 기록 불러오기 (개인 API)
+      async function loadRecords() {
+        try {
+          const res = await fetch("/api/records", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const records = await res.json();
+          renderDashboard(records);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function renderDashboard(records) {
+        const total = records.length;
+        const monthly = records.reduce(
+          (s, r) => s + Number(r.monthly_saving || 0),
+          0,
+        );
+        const avg = total
+          ? Math.round(
+              records.reduce(
+                (s, r) =>
+                  s + Math.min(100, (r.current_asset / r.goal_amount) * 100),
+                0,
+              ) / total,
+            )
+          : 0;
+
+        document.getElementById("totalCount").innerText = total;
+        document.getElementById("monthlyTotal").innerText =
+          formatCompact(monthly);
+        document.getElementById("averageProgressLabel").innerText = `${avg}%`;
+        document.getElementById("averageProgressBar").style.width = `${avg}%`;
+
+        const list = document.getElementById("recordList");
+        if (!total) {
+          list.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400 font-bold italic">아직 등록된 목표가 없습니다. '목표 추가' 버튼을 눌러보세요!</div>`;
+          return;
+        }
+
+        list.innerHTML = records
+          .map((r) => {
+            const prog = Math.min(
+              100,
+              Math.round((r.current_asset / r.goal_amount) * 100),
+            );
+            return `
+            <article class="bento-card p-8 group">
+              <div class="flex justify-between items-start mb-6">
+                <h4 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition">${r.title}</h4>
+                <button onclick="deleteRecord(${r.id})" class="text-slate-200 hover:text-red-500 transition-colors"><i class="fas fa-trash-can"></i></button>
+              </div>
+              
+              <div class="mb-8 space-y-4">
+                <div class="flex justify-between text-[11px] font-black text-slate-300 uppercase tracking-widest">
+                  <span>Progress</span>
+                  <span class="text-blue-600 text-lg">${prog}%</span>
+                </div>
+                <div class="h-2.5 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner">
+                  <div class="progress-fill h-full" style="width: ${prog}%"></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 mb-2 text-center">
+                <div class="bg-slate-50 p-4 rounded-[2rem]">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Current</p>
+                  <p class="font-extrabold text-slate-700 text-sm">${formatCompact(r.current_asset)}</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-[2rem]">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Target</p>
+                  <p class="font-extrabold text-slate-700 text-sm">${formatCompact(r.goal_amount)}</p>
+                </div>
+              </div>
+            </article>
+          `;
+          })
+          .join("");
+      }
+
+      async function addRecord() {
+        const payload = {
+          title: document.getElementById("modalTitle").value,
+          current_asset: document.getElementById("modalCurrent").value,
+          monthly_saving: document.getElementById("modalMonthly").value,
+          goal_amount: document.getElementById("modalGoal").value,
+        };
+        if (!payload.title || !payload.goal_amount)
+          return alert("필수 항목을 입력하세요.");
+        const res = await fetch("/api/records", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          closeModal();
+          loadRecords();
+        }
+      }
+
+      async function deleteRecord(id) {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+        await fetch(`/api/records/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        loadRecords();
+      }
+    </script>
+  </body>
+</html>
