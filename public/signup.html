@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finBoard - 회원가입</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen py-10 px-4">
+      <div class="bg-white p-10 rounded-2xl shadow-lg w-full max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-2">회원가입</h1>
+        <p class="text-gray-500 text-center mb-10 text-base">
+          finBoard와 함께 자산을 관리해보세요
+        </p>
+
+        <form id="signupForm">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
+            <div
+              class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gray-200"
+            ></div>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                  >이메일 (아이디)</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="example@mail.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                  >비밀번호</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="영문, 숫자 포함 8자 이상"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                  >비밀번호 확인</label
+                >
+                <input
+                  type="password"
+                  id="passwordConfirm"
+                  class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="비밀번호 재입력"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                    >이름</label
+                  >
+                  <input
+                    type="text"
+                    id="name"
+                    class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="홍길동"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                    >휴대전화</label
+                  >
+                  <input
+                    type="tel"
+                    id="phone"
+                    class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="010-0000-0000"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5"
+                  >생년월일</label
+                >
+                <input
+                  type="date"
+                  id="birthdate"
+                  class="w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row-reverse gap-4"
+          >
+            <button
+              type="submit"
+              class="w-full md:w-1/2 bg-blue-500 text-white py-4 rounded-lg font-bold hover:bg-blue-600 transition duration-150"
+            >
+              가입 완료
+            </button>
+            <button
+              type="button"
+              onclick="history.back()"
+              class="w-full md:w-1/2 text-gray-500 py-4 text-sm hover:underline hover:text-gray-700 transition"
+            >
+              이미 계정이 있으신가요? 로그인으로 돌아가기
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("signupForm").onsubmit = async function (e) {
+        e.preventDefault();
+
+        const pw = document.getElementById("password").value;
+        const pwConfirm = document.getElementById("passwordConfirm").value;
+
+        if (pw !== pwConfirm) {
+          alert("비밀번호가 일치하지 않습니다!");
+          return;
+        }
+
+        const formData = {
+          email: document.getElementById("email").value,
+          password: pw,
+          name: document.getElementById("name").value,
+          phone: document.getElementById("phone").value,
+          birthdate: document.getElementById("birthdate").value,
+        };
+
+        try {
+          const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert(result.message);
+            location.href = "index.html";
+          } else {
+            alert("오류: " + result.message);
+          }
+        } catch (error) {
+          alert("서버 연결에 실패했습니다.");
+          console.error(error);
+        }
+      };
+    </script>
+  </body>
+</html>
