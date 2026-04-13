@@ -5,7 +5,7 @@
 JWT 기반 사용자 인증이 포함된 데이터 기반 게시판 서비스
 
 배포 주소:
-[(Cloudflare 도메인 URL 입력)](https://doctrine-remix-recipe-scoring.trycloudflare.com/)
+https://doctrine-remix-recipe-scoring.trycloudflare.com/
 
 사용 기술:
 HTML, CSS, Tailwind CSS, JavaScript, Node.js(Express), MariaDB, JWT, GCP, Cloudflare
